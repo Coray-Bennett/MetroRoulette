@@ -1,9 +1,10 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Map;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,16 @@ public class MetroTransitSystemDAOTest {
         JSONArray redLine = metroDao.getLine("RD");
         assertTrue(redLine.getJSONObject(0).getString("StationCode").equals("A15"));
         assertTrue(redLine.getJSONObject(redLine.length()-1).getString("StationCode").equals("B11"));
+    }
+
+    @Test
+    public void testCreateGraph() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+        for(Station station : stationMap.values()) {
+            assertTrue(graph.containsVertex(station));
+        }
+        
     }
 
 }

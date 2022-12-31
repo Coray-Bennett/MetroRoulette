@@ -6,7 +6,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -93,9 +92,14 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
                 JSONObject json = (JSONObject) obj;
                 String code = json.getString("Code");
                 Station station = new Station(json);
+                stationMap.put(code, station);
             }
         }
 
+        return stationMap;
+    }
+
+    public Map<String, Station> getStationMap() {
         return stationMap;
     }
 
@@ -116,25 +120,54 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     public List<JSONArray> getAllLines() {
         final String[] lineCodes = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
-        List<List<Station>> lines = new ArrayList<List<Station>>();
+        List<JSONArray> lines = new ArrayList<JSONArray>();
 
         for(String lineCode : lineCodes) {
-            
+            lines.add(getLine(lineCode));
+        }
+
+        return lines;
+    }
+
+    @Override
+    public Graph<Station, DefaultWeightedEdge> createGraph() {
+        
+        Graph<Station, DefaultWeightedEdge> metroGraph = new Multigraph<>(DefaultWeightedEdge.class);
+        List<JSONArray> lines = getAllLines();
+
+        for(JSONArray line : lines) {
+            JSONObject last = null;
+            for(Object obj : line) {
+                if(obj.getClass().equals(JSONObject.class)) {
+                    JSONObject json = (JSONObject) obj;
+                    String code = json.getString("StationCode");
+
+                    System.out.println(code);
+
+                    if(last == null) {
+                        last = json;
+                        continue;
+                    }
+
+                    String lastCode = last.getString("StationCode");
+
+                    Station station = stationMap.get(code);
+                    Station lastStation = stationMap.get(lastCode);
+
+                    int weight = json.getInt("DistanceToPrev");
+
+                    metroGraph.addVertex(station);
+                    metroGraph.addVertex(lastStation);
+                    DefaultWeightedEdge edge = metroGraph.addEdge(station, lastStation);
+                    metroGraph.setEdgeWeight(edge, weight);
+
+                }
+            }
 
 
         }
 
-        return null;
-    }
-
-    @Override
-    public Graph<Station, DefaultWeightedEdge> createGraph(List<List<Station>> lines) {
-        
-        Graph<Station, DefaultWeightedEdge> metroGraph = new Multigraph<>(DefaultWeightedEdge.class);
-
-
-
-        return null;
+        return metroGraph;
     }
 
     @Override
@@ -142,5 +175,9 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         // TODO Auto-generated method stub
         return null;
     }
+
+    // public static void main(String[] args) {
+    //     MetroTransitSystemDAO metroDao = new MetroTransitSystemDAO();
+    // }
     
 }

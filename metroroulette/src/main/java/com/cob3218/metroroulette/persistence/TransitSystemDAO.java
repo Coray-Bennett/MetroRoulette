@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.json.JSONObject;
 
 import com.cob3218.metroroulette.model.Station;
 
@@ -21,7 +20,7 @@ public interface TransitSystemDAO {
      * @param lines
      * @return
      */
-    Graph<Station, DefaultWeightedEdge> createGraph(List<List<Station>> lines);
+    Graph<Station, DefaultWeightedEdge> createGraph();
 
     List<Station> generateRandomRoute(int maxStops, List<String> selectedLines, 
         int maxLengthMinutes);
