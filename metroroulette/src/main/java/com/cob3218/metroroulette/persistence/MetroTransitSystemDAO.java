@@ -15,9 +15,11 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.Multigraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import com.cob3218.metroroulette.model.Station;
 
+@Component
 public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     public List<Station> getLine(String lineCode) {
@@ -32,7 +34,19 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
          .join()
          .body(); 
 
+        //removes leading and end text/brackets to create json array with [] at start/end
+        while(str.charAt(0) != '[') {
+            str = str.substring(1, str.length());
+        }
+        str = str.substring(0, str.length() - 1);
+
         JSONArray jsonArr = new JSONArray(str);
+
+        for(Object json : jsonArr) {
+            if(json.getClass().equals(JSONObject.class)) {
+                line.add(new Station((JSONObject) json));
+            }
+        }
 
         return line;
 

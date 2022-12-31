@@ -6,6 +6,8 @@ import java.net.http.HttpResponse.BodyHandlers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.cob3218.metroroulette.model.Station;
+
 
 public class JavaSampleArray {
     
@@ -25,11 +27,11 @@ public class JavaSampleArray {
         str = str.substring(0, str.length() - 1);
 
         JSONArray jsonArr = new JSONArray(str);
-        
+        System.out.println(jsonArr.toString());
 
         for(Object j : jsonArr) {
             if(j.getClass().equals(JSONObject.class)) {
-                System.out.println(j.toString());
+                System.out.println(new Station((JSONObject) j));
             }
         }
     }
