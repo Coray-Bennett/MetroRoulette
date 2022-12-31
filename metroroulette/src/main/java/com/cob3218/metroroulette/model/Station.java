@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+/**
+ * container for info related to a given Metro train station
+ * 
+ * @author Coray Bennett
+ */
 public class Station {
     
     private String name;
