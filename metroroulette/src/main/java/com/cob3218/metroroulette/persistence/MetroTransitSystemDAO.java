@@ -158,6 +158,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
                     }
 
                     String lastCode = last.getString("StationCode");
+                    last = json;
 
                     Station station = stationMap.get(code);
                     Station lastStation = stationMap.get(lastCode);
@@ -173,7 +174,6 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
                     }
 
                     DefaultWeightedEdge edge = metroGraph.addEdge(station, lastStation);
-
                     metroGraph.setEdgeWeight(edge, weight);
 
                 }

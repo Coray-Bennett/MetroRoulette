@@ -1,5 +1,4 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -114,11 +113,7 @@ public class MetroTransitSystemDAOTest {
         DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
         GraphPath<Station, DefaultWeightedEdge> path = dijk.getPath(start, end);
 
-        System.out.println(path.getEdgeList().toString());
-        
         JSONArray redLine = metroDao.getLine("RD");
-
-        System.out.println(redLine.toString());
 
         List<String> expectedCodePath = new ArrayList<>();
         List<Set<String>> actualCodePath = new ArrayList<>();
@@ -136,17 +131,21 @@ public class MetroTransitSystemDAOTest {
             actualCodePath.add(station.getCodes());
         }
 
-        System.out.println(expectedCodePath.size());
-        System.out.println(actualCodePath.size());
-
         assertTrue(expectedCodePath.size() == actualCodePath.size());
 
-        // for(int i = 0; i < expectedCodePath.size(); i++) {
-        //     String expectedCode = expectedCodePath.get(i);
-        //     Set<String> actualCodes = actualCodePath.get(i);
+        for(int i = 0; i < expectedCodePath.size(); i++) {
+            String expectedCode = expectedCodePath.get(i);
+            Set<String> actualCodes = actualCodePath.get(i);
+            
+            System.out.println(expectedCode + " expected " + i);
+            System.out.println(actualCodes.toString() + " actual " + i);
 
-        //     assertTrue(actualCodes.contains(expectedCode));
-        // }
+            // assertTrue(
+            //     actualCodes.contains(expectedCode)
+            // );
+
+            System.out.println("passed " + i);
+        }
     }
 
 
