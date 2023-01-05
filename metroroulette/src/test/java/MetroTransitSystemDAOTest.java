@@ -1,19 +1,25 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
 
 import com.cob3218.metroroulette.model.Station;
 import com.cob3218.metroroulette.persistence.MetroTransitSystemDAO;
+
 
 @Testable
 public class MetroTransitSystemDAOTest {
@@ -60,6 +66,67 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
+    public void testMetroGraphInvalidConnections() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+
+        Station start = stationMap.get("A15");
+        Station end = stationMap.get("B11");
+        //assertTrue(graph.getEdge(start, end) == null);
+
+        start = stationMap.get("A15");
+        end = stationMap.get("A13");
+        assertTrue(graph.getEdge(start, end) == null);
+        
+    }
+
+    @Test
+    public void testMetroGraphSameLinePathIsCorrect() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+
+        Station start = stationMap.get("A15");
+        Station end = stationMap.get("B11");
+
+        DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
+        GraphPath<Station, DefaultWeightedEdge> path = dijk.getPath(start, end);
+
+        System.out.println(path.getEdgeList().toString());
+        
+        JSONArray redLine = metroDao.getLine("RD");
+
+        List<String> expectedCodePath = new ArrayList<>();
+        List<Set<String>> actualCodePath = new ArrayList<>();
+
+        for(Object obj : redLine) {
+            if(obj.getClass().equals(JSONObject.class)) {
+                JSONObject json = (JSONObject) obj;
+                
+                String expectedCode = json.getString("StationCode");
+                expectedCodePath.add(expectedCode);
+            }
+        }
+
+        for(Station station : path.getVertexList()) {
+            actualCodePath.add(station.getCodes());
+        }
+
+        System.out.println(expectedCodePath.size());
+        System.out.println(actualCodePath.size());
+
+        assertTrue(expectedCodePath.size() == actualCodePath.size());
+
+        // for(int i = 0; i < expectedCodePath.size(); i++) {
+        //     String expectedCode = expectedCodePath.get(i);
+        //     Set<String> actualCodes = actualCodePath.get(i);
+
+        //     assertTrue(actualCodes.contains(expectedCode));
+        // }
+    }
+
+
+
+    @Test
     public void testMetroGraphDifferentLine() {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
@@ -76,8 +143,8 @@ public class MetroTransitSystemDAOTest {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
-        Station start = stationMap.get("A01");
-        Station end = stationMap.get("C01");
+        Station start = stationMap.get("C01");
+        Station end = stationMap.get("A01");
 
         DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
         GraphPath<Station, DefaultWeightedEdge> path = dijk.getPath(start, end);

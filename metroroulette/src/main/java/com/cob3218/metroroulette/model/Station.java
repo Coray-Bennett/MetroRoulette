@@ -62,8 +62,8 @@ public class Station {
         return lineCodes;
     }
 
-    public void addLineCode(String lineCode) {
-        lineCodes.add(lineCode);
+    public void addLineCodeSet(Set<String> lineCodes) {
+        this.lineCodes.addAll(lineCodes);
     }
 
     @Override

@@ -93,6 +93,15 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
                 String code = json.getString("Code");
 
                 Station station = new Station(json);
+                //finds any identical station (shared codes) and makes sure they list all line codes
+                for(Station s : stationMap.values()) {
+                    if(station.equals(s)) {
+                        station.addLineCodeSet(s.getLineCodes());
+                        s.addLineCodeSet(station.getLineCodes());
+                        break;
+                    }
+                }
+
                 stationMap.put(code, station);
             }
         }
