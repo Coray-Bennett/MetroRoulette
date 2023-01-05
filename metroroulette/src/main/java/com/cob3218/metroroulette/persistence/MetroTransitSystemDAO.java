@@ -163,9 +163,14 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
                     Station lastStation = stationMap.get(lastCode);
 
                     int weight = json.getInt("DistanceToPrev");
+                    
+                    if(!metroGraph.containsVertex(station)) {
+                        metroGraph.addVertex(station);
+                    }
 
-                    metroGraph.addVertex(station);
-                    metroGraph.addVertex(lastStation);
+                    if(!metroGraph.containsVertex(lastStation)) {
+                        metroGraph.addVertex(lastStation);
+                    }
 
                     DefaultWeightedEdge edge = metroGraph.addEdge(station, lastStation);
 

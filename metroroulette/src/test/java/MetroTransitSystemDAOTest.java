@@ -66,16 +66,39 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
+    public void testMetroGraphValidConnections() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+
+        Station start = stationMap.get("A15");
+        Station end = stationMap.get("A14");
+        assertTrue(graph.getEdge(start, end) != null);
+
+        start = stationMap.get("A14");
+        end = stationMap.get("A15");
+        assertTrue(graph.getEdge(start, end) != null);
+
+        start = stationMap.get("N03");
+        end = stationMap.get("N02");
+        assertTrue(graph.getEdge(start, end) != null);
+        
+    }
+
+    @Test
     public void testMetroGraphInvalidConnections() {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
         Station start = stationMap.get("A15");
         Station end = stationMap.get("B11");
-        //assertTrue(graph.getEdge(start, end) == null);
+        assertTrue(graph.getEdge(start, end) == null);
 
         start = stationMap.get("A15");
         end = stationMap.get("A13");
+        assertTrue(graph.getEdge(start, end) == null);
+
+        start = stationMap.get("A15");
+        end = stationMap.get("G05");
         assertTrue(graph.getEdge(start, end) == null);
         
     }
@@ -94,6 +117,8 @@ public class MetroTransitSystemDAOTest {
         System.out.println(path.getEdgeList().toString());
         
         JSONArray redLine = metroDao.getLine("RD");
+
+        System.out.println(redLine.toString());
 
         List<String> expectedCodePath = new ArrayList<>();
         List<Set<String>> actualCodePath = new ArrayList<>();
