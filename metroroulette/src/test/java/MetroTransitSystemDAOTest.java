@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Map;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +45,44 @@ public class MetroTransitSystemDAOTest {
         for(Station station : stationMap.values()) {
             assertTrue(graph.containsVertex(station));
         }
-        
+    }
+
+    @Test
+    public void testMetroGraphSameLine() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+
+        Station start = stationMap.get("A15");
+        Station end = stationMap.get("B11");
+
+        DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
+        assertTrue(dijk.getPath(start, end) != null);
+    }
+
+    @Test
+    public void testMetroGraphDifferentLine() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+
+        Station start = stationMap.get("A15");
+        Station end = stationMap.get("G05");
+
+        DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
+        assertTrue(dijk.getPath(start, end) != null);
+    }
+
+    @Test
+    public void testMetroGraphSameStationDifferentCode() {
+        Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
+        Map<String, Station> stationMap = metroDao.getStationMap();
+
+        Station start = stationMap.get("A01");
+        Station end = stationMap.get("C01");
+
+        DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
+        GraphPath<Station, DefaultWeightedEdge> path = dijk.getPath(start, end);
+        System.out.println(path.toString());
+        assertTrue(path != null);
     }
 
 }

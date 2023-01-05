@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.Multigraph;
+import org.jgrapht.graph.WeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -91,6 +91,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
             if(obj.getClass().equals(JSONObject.class)) {
                 JSONObject json = (JSONObject) obj;
                 String code = json.getString("Code");
+
                 Station station = new Station(json);
                 stationMap.put(code, station);
             }
@@ -132,7 +133,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     @Override
     public Graph<Station, DefaultWeightedEdge> createGraph() {
         
-        Graph<Station, DefaultWeightedEdge> metroGraph = new Multigraph<>(DefaultWeightedEdge.class);
+        Graph<Station, DefaultWeightedEdge> metroGraph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
         List<JSONArray> lines = getAllLines();
 
         for(JSONArray line : lines) {
@@ -141,8 +142,6 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
                 if(obj.getClass().equals(JSONObject.class)) {
                     JSONObject json = (JSONObject) obj;
                     String code = json.getString("StationCode");
-
-                    System.out.println(code);
 
                     if(last == null) {
                         last = json;
@@ -158,13 +157,13 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
                     metroGraph.addVertex(station);
                     metroGraph.addVertex(lastStation);
+
                     DefaultWeightedEdge edge = metroGraph.addEdge(station, lastStation);
+
                     metroGraph.setEdgeWeight(edge, weight);
 
                 }
             }
-
-
         }
 
         return metroGraph;

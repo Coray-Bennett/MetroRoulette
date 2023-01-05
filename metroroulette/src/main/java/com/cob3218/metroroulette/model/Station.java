@@ -1,7 +1,9 @@
 package com.cob3218.metroroulette.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -13,30 +15,31 @@ import org.json.JSONObject;
 public class Station {
     
     private String name;
-    private String code;
-    private List<String> altCodes;
-    private List<String> lineCodes;
+    private Set<String> codes;
+    private Set<String> lineCodes;
 
-    public Station(String name, String code, List<String> altCodes, List<String> lineCodes) {
+    public Station(String name, Set<String> codes, Set<String> lineCodes) {
         this.name = name;
-        this.code = code;
-        this.altCodes = altCodes;
+        this.codes = codes;
         this.lineCodes = lineCodes;
     }
 
     public Station(JSONObject json) {
-        this.name = json.getString("Name");
-        this.code = json.getString("Code");
+        this.codes = new HashSet<>();
 
-        this.altCodes = new ArrayList<>();
+        this.name = json.getString("Name");
+        this.codes.add(json.getString("Code"));
         try {
-            this.altCodes.add(json.getString("StationTogether1"));
-            this.altCodes.add(json.getString("StationTogether2"));
+            this.codes.add(json.getString("StationTogether1"));
+            this.codes.add(json.getString("StationTogether2"));
         }
         catch(Exception e) {}
-        
 
-        this.lineCodes = new ArrayList<>();
+        if(this.codes.contains("")) {
+            this.codes.remove("");
+        }
+
+        this.lineCodes = new HashSet<>();
         try {
             this.lineCodes.add(json.getString("LineCode1"));
             this.lineCodes.add(json.getString("LineCode2"));
@@ -47,20 +50,34 @@ public class Station {
 
     }
 
-    public String getCode() {
-        return code;
-    }
-
     public String getName() {
         return name;
     }
 
-    public List<String> getAltCodes() {
-        return altCodes;
+    public Set<String> getCodes() {
+        return codes;
     }
 
-    public List<String> getLineCodes() {
+    public Set<String> getLineCodes() {
         return lineCodes;
+    }
+
+    public void addLineCode(String lineCode) {
+        lineCodes.add(lineCode);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(! this.getClass().equals(o.getClass())) {
+            return false;
+        }
+
+        return this.getName().equals(((Station) o).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getName().hashCode();
     }
 
     @Override
@@ -69,11 +86,9 @@ public class Station {
 
         str += "Station={name:" + name;
 
-        str += ", code:" + code;
-
-        str += ", altCodes:[";
-        for(String c : altCodes) {str += c + ",";}
-        str = str.substring(0, str.length() - 2) + "]";
+        str += ", codes:[";
+        for(String c : codes) {str += c + ",";}
+        str = str.substring(0, str.length() - 1) + "]";
 
         str += ", lineCodes:[";
         for(String c : lineCodes) {str += c + ",";}
