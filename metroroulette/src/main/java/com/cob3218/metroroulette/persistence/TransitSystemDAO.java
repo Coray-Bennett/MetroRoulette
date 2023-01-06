@@ -22,7 +22,7 @@ public interface TransitSystemDAO {
      */
     Graph<Station, DefaultWeightedEdge> createGraph();
 
-    List<Station> generateRandomRoute(int maxStops, List<String> selectedLines, 
+    List<Station> generateRandomRoute(Station start, int maxStops, String[] selectedLines, 
         int maxLengthMinutes);
 
 }

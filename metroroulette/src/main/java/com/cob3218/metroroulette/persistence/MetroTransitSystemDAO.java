@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.json.JSONArray;
@@ -23,10 +26,12 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     private Map<String, String[]> lineEndpoints;
     private Map<String, Station> stationMap;
+    private Graph<Station, DefaultWeightedEdge> metroGraph;
 
     public MetroTransitSystemDAO() {
         lineEndpoints = lineEndpoints();
         stationMap = stationMap();
+        metroGraph = createGraph();
     }
     
     //helper function to make http requests
@@ -184,9 +189,38 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     }
 
     @Override
-    public List<Station> generateRandomRoute(int maxStops, List<String> selectedLines, int maxLengthMinutes) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Station> generateRandomRoute(Station start, int maxStops, String[] selectedLines, int maxLengthMinutes) {
+        final int AVG_SPEED_MPH = 33;
+        final int FT_IN_MILE = 5280;
+
+        Object[] stations = stationMap.values().toArray();
+        Random random = new Random();
+        List<Station> validStations = new ArrayList<>();
+
+        for(Object obj : stations) {
+            Station station = (Station) obj;
+
+            for(String line : selectedLines) {
+                if(station.getLineCodes().contains(line)) {
+                    validStations.add(station);
+                    break;
+                }
+            }
+        }
+
+        DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(metroGraph);
+        GraphPath<Station, DefaultWeightedEdge> path = null;
+        int pathLengthMinutes = Integer.MAX_VALUE;
+        
+        while(path == null || (path.getLength() >= maxStops &&  pathLengthMinutes <= maxLengthMinutes) ) {
+            
+            Station destination = validStations.get( random.nextInt(validStations.size()) );
+            path = dijk.getPath(start, destination);
+
+            pathLengthMinutes = AVG_SPEED_MPH * FT_IN_MILE / 60 / (int) path.getWeight();
+        }
+
+        return path.getVertexList();
     }
 
     // public static void main(String[] args) {
