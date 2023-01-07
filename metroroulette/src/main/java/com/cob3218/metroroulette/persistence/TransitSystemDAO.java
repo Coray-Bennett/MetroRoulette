@@ -1,6 +1,7 @@
 package com.cob3218.metroroulette.persistence;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -13,6 +14,8 @@ import com.cob3218.metroroulette.model.Station;
  * @author Coray Bennett
  */
 public interface TransitSystemDAO {
+
+    Map<String, Station> getStationMap();
 
     /**
      * Creates a weighted graph using JGraphT that represents all connections between

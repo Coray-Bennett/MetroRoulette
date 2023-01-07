@@ -90,7 +90,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     }
 
     
-    private Map<String, Station> stationMap() {
+    public Map<String, Station> stationMap() {
         Map<String, Station> stationMap = new HashMap<>();
 
         String str = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jStations");
