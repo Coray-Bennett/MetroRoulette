@@ -6,9 +6,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
@@ -27,6 +29,8 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     private Map<String, String[]> lineEndpoints;
     private Map<String, Station> stationMap;
     private Graph<Station, DefaultWeightedEdge> metroGraph;
+
+    public final String[] LINE_CODES = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
     public MetroTransitSystemDAO() {
         lineEndpoints = lineEndpoints();
@@ -133,11 +137,10 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     }
 
     public List<JSONArray> getAllLines() {
-        final String[] lineCodes = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
         List<JSONArray> lines = new ArrayList<JSONArray>();
 
-        for(String lineCode : lineCodes) {
+        for(String lineCode : LINE_CODES) {
             lines.add(getLine(lineCode));
         }
 
@@ -190,12 +193,16 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     @Override
     public List<Station> generateRandomRoute(Station start, int maxStops, String[] selectedLines, int maxLengthMinutes) {
-        final int AVG_SPEED_MPH = 33;
-        final int FT_IN_MILE = 5280;
+        final double AVG_SPEED_MPH = 33;
+        final double FT_IN_MILE = 5280;
+
+        if(selectedLines == null) {
+            selectedLines = LINE_CODES;
+        }   
 
         Object[] stations = stationMap.values().toArray();
         Random random = new Random();
-        List<Station> validStations = new ArrayList<>();
+        Set<Station> validStations = new HashSet<>();
 
         for(Object obj : stations) {
             Station station = (Station) obj;
@@ -208,16 +215,41 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
             }
         }
 
+        validStations.remove(start);
+
         DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(metroGraph);
         GraphPath<Station, DefaultWeightedEdge> path = null;
+
         int pathLengthMinutes = Integer.MAX_VALUE;
+        int waitTime = 0;
         
-        while(path == null || (path.getLength() >= maxStops &&  pathLengthMinutes <= maxLengthMinutes) ) {
+        while(!validStations.isEmpty() 
+        && (path == null || path.getLength() > maxStops || pathLengthMinutes > maxLengthMinutes) )  {
             
-            Station destination = validStations.get( random.nextInt(validStations.size()) );
+            Station destination = (Station) validStations.toArray()[random.nextInt(validStations.size())];
             path = dijk.getPath(start, destination);
 
-            pathLengthMinutes = AVG_SPEED_MPH * FT_IN_MILE / 60 / (int) path.getWeight();
+            //a change in the current lines you are on implies you will be waiting for another train car
+            //we must add wait time to accurately approximate total time to reach destination
+            waitTime = 0;
+            for(DefaultWeightedEdge edge : path.getEdgeList()) {
+                Station stationA = metroGraph.getEdgeSource(edge);
+                Station stationB = metroGraph.getEdgeTarget(edge);
+
+                Set<String> intersection = new HashSet<>(stationA.getLineCodes());
+                if(intersection.retainAll(stationB.getLineCodes())) {
+                    waitTime += 5;
+                }
+            }
+
+            waitTime += path.getVertexList().size(); //approx. 1min wait per stop at station
+            pathLengthMinutes = waitTime + (int) Math.ceil(1 / ( (AVG_SPEED_MPH * FT_IN_MILE / 60) / path.getWeight() ));
+
+            validStations.remove(destination);
+        }
+
+        if(validStations.isEmpty() && (path.getLength() > maxStops || pathLengthMinutes > maxLengthMinutes) ) {
+            return null;
         }
 
         return path.getVertexList();

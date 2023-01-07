@@ -172,8 +172,59 @@ public class MetroTransitSystemDAOTest {
 
         DijkstraShortestPath<Station, DefaultWeightedEdge> dijk = new DijkstraShortestPath<>(graph);
         GraphPath<Station, DefaultWeightedEdge> path = dijk.getPath(start, end);
-        System.out.println(path.toString());
+
         assertTrue(path != null);
     }
+
+
+    @Test
+    public void testGenerateRouteCreatesPath() {
+        List<Station> randomPath = 
+            metroDao.generateRandomRoute(metroDao.getStationMap().get("A01"), Integer.MAX_VALUE, null, 120);
+
+        assertTrue(randomPath != null);
+    } 
+    
+    @Test
+    public void testGenerateRouteOneValidLine() {
+        List<Station> randomPath = 
+            metroDao.generateRandomRoute(metroDao.getStationMap().get("G02"), Integer.MAX_VALUE, new String[]{"RD"}, 120);
+
+        assertTrue(randomPath != null);
+        assertTrue(randomPath.get(randomPath.size() - 1).getLineCodes().contains("RD") );
+    }  
+    
+    @Test
+    public void testGenerateRouteOneMultipleValidLines() {
+        String[] lines = new String[]{"RD", "YL", "SV"};
+        List<Station> randomPath = 
+            metroDao.generateRandomRoute(metroDao.getStationMap().get("G02"), Integer.MAX_VALUE, lines, 120);
+
+        assertTrue(randomPath != null);
+        assertTrue(
+               randomPath.get(randomPath.size() - 1).getLineCodes().contains(lines[0])
+            || randomPath.get(randomPath.size() - 1).getLineCodes().contains(lines[1])
+            || randomPath.get(randomPath.size() - 1).getLineCodes().contains(lines[2]));
+    }   
+
+    @Test
+    public void testGenerateRouteImpossibleRoute() {
+        List<Station> randomPath = 
+            metroDao.generateRandomRoute(metroDao.getStationMap().get("A01"), 0, null, 0);
+
+        assertTrue(randomPath == null);
+    }   
+
+    @Test
+    public void testGenerateRouteMaxStops() {
+        List<Station> randomPath = 
+            metroDao.generateRandomRoute(metroDao.getStationMap().get("A01"), 3, null, 120);
+
+        assertTrue(randomPath != null);
+        System.out.println(randomPath.toString());
+        assertTrue(randomPath.size() <= 4);
+    } 
+
+
 
 }
