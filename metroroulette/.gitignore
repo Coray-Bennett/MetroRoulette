@@ -4,9 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### api keys ###
-api_keys.json
-
 ### STS ###
 .apt_generated
 .classpath

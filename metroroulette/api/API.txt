@@ -1,8 +1,3 @@
 In order to run this project, you need a WPA API key.
-To add one, simply create a file name api_keys.json in this directory and
-add a list of JSON objects, with the first object using the following structure:
-
-{
-    "name" = "metro_api_key",
-    "value" = YOUR_KEY
-}
+You can add one by creating a System Environment Variable
+with the name "metro_api_key" and the value as your API key.

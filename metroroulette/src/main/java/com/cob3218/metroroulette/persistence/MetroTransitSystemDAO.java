@@ -1,7 +1,5 @@
 package com.cob3218.metroroulette.persistence;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,12 +20,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
-
-import com.cob3218.metroroulette.model.ApiKey;
 import com.cob3218.metroroulette.model.Station;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class MetroTransitSystemDAO implements TransitSystemDAO {
@@ -40,24 +33,11 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     public final String[] LINE_CODES = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
-    public MetroTransitSystemDAO() throws StreamReadException, DatabindException, IOException {
-        api_key = readApiKey("api/api_keys.json");
+    public MetroTransitSystemDAO() {
+        api_key = System.getenv("metro_api_key");
         lineEndpoints = lineEndpoints();
         stationMap = stationMap();
         metroGraph = createGraph();
-    }
-
-    private String readApiKey(String filename) throws StreamReadException, DatabindException, IOException {
-
-        ObjectMapper mapper = new ObjectMapper();
-        ApiKey[] keys = mapper.readValue(new File(filename), ApiKey[].class);
-        
-        for(ApiKey key : keys) {
-            if(key.getName().equals("metro_api_key")) {
-                return key.getValue();
-            }
-        }
-        return null;
     }
     
     //helper function to make http requests

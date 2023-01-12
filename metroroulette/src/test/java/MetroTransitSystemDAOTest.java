@@ -1,7 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +18,6 @@ import org.junit.platform.commons.annotation.Testable;
 
 import com.cob3218.metroroulette.model.Station;
 import com.cob3218.metroroulette.persistence.MetroTransitSystemDAO;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 
 
 @Testable
@@ -29,7 +26,7 @@ public class MetroTransitSystemDAOTest {
     MetroTransitSystemDAO metroDao;
 
     @BeforeEach
-    public void setupMetroDAO() throws StreamReadException, DatabindException, IOException {
+    public void setupMetroDAO() {
         metroDao = new MetroTransitSystemDAO();
     }
     
