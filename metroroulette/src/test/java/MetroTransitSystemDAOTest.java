@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +19,17 @@ import org.junit.platform.commons.annotation.Testable;
 
 import com.cob3218.metroroulette.model.Station;
 import com.cob3218.metroroulette.persistence.MetroTransitSystemDAO;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 
 
 @Testable
 public class MetroTransitSystemDAOTest {
+
     MetroTransitSystemDAO metroDao;
 
     @BeforeEach
-    public void setupMetroDAO() {
+    public void setupMetroDAO() throws StreamReadException, DatabindException, IOException {
         metroDao = new MetroTransitSystemDAO();
     }
     
@@ -132,20 +136,6 @@ public class MetroTransitSystemDAOTest {
         }
 
         assertTrue(expectedCodePath.size() == actualCodePath.size());
-
-        for(int i = 0; i < expectedCodePath.size(); i++) {
-            String expectedCode = expectedCodePath.get(i);
-            Set<String> actualCodes = actualCodePath.get(i);
-            
-            System.out.println(expectedCode + " expected " + i);
-            System.out.println(actualCodes.toString() + " actual " + i);
-
-            // assertTrue(
-            //     actualCodes.contains(expectedCode)
-            // );
-
-            System.out.println("passed " + i);
-        }
     }
 
 
@@ -221,7 +211,6 @@ public class MetroTransitSystemDAOTest {
             metroDao.generateRandomRoute(metroDao.getStationMap().get("A01"), 3, null, 120);
 
         assertTrue(randomPath != null);
-        System.out.println(randomPath.toString());
         assertTrue(randomPath.size() <= 4);
     } 
 

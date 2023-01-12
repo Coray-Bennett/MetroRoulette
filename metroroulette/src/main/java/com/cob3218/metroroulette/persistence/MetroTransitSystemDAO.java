@@ -1,5 +1,7 @@
 package com.cob3218.metroroulette.persistence;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -21,7 +23,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import com.cob3218.metroroulette.model.ApiKey;
 import com.cob3218.metroroulette.model.Station;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 
 @Component
 public class MetroTransitSystemDAO implements TransitSystemDAO {
@@ -30,12 +39,28 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     private Map<String, Station> stationMap;
     private Graph<Station, DefaultWeightedEdge> metroGraph;
 
+    private String api_key;
+
     public final String[] LINE_CODES = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
-    public MetroTransitSystemDAO() {
+    public MetroTransitSystemDAO() throws StreamReadException, DatabindException, IOException {
+        api_key = readApiKey("api/api_keys.json");
         lineEndpoints = lineEndpoints();
         stationMap = stationMap();
         metroGraph = createGraph();
+    }
+
+    private String readApiKey(String filename) throws StreamReadException, DatabindException, IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        ApiKey[] keys = mapper.readValue(new File(filename), ApiKey[].class);
+        
+        for(ApiKey key : keys) {
+            if(key.getName().equals("metro_api_key")) {
+                return key.getValue();
+            }
+        }
+        return null;
     }
     
     //helper function to make http requests
@@ -43,7 +68,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-         .uri(URI.create(uri)).header("api_key", "9960c138fb2e48fcbb0e6bf41ce573db")
+         .uri(URI.create(uri)).header("api_key", api_key)
          .build();
         
         String str = client.sendAsync(request, BodyHandlers.ofString())
@@ -248,7 +273,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
             validStations.remove(destination);
         }
 
-        if(validStations.isEmpty() && (path.getLength() > maxStops || pathLengthMinutes > maxLengthMinutes) ) {
+        if(path == null || (validStations.isEmpty() && (path.getLength() > maxStops || pathLengthMinutes > maxLengthMinutes)) ) {
             return null;
         }
 
