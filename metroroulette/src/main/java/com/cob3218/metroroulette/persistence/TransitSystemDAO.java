@@ -15,16 +15,28 @@ import com.cob3218.metroroulette.model.Station;
  */
 public interface TransitSystemDAO {
 
+    /**
+     * 
+     * @return a map relating each station code to it's corresponding station
+     */
     Map<String, Station> getStationMap();
 
     /**
      * Creates a weighted graph using JGraphT that represents all connections between
      * different stations and the distances between them
-     * @param lines
-     * @return
+     * @return Graph<Station, DefaultWeightedEdge> representing a transit system
      */
     Graph<Station, DefaultWeightedEdge> createGraph();
 
+    /**
+     * Using the weighted graph of a Transit System, generates a random valid route
+     * based on the following parameters. If no valid route exists, returns null.
+     * @param start the Station that you are currently at (start of path)
+     * @param maxStops the maximum number of stops away your destination can be (length of path)
+     * @param selectedLines the lines that your destination can end on (optional, can be null)
+     * @param maxLengthMinutes the maximum (approximate) minutes you would like the route to take (travel time)
+     * @return List<Station> representing the randomly generated path from start to finish
+     */
     List<Station> generateRandomRoute(Station start, int maxStops, String[] selectedLines, 
         int maxLengthMinutes);
 

@@ -22,6 +22,11 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import com.cob3218.metroroulette.model.Station;
 
+/**
+ * Implementation of TransitSystemDAO that represents the Washington DC Metro
+ * 
+ * @author Coray Bennett
+ */
 @Component
 public class MetroTransitSystemDAO implements TransitSystemDAO {
 
@@ -39,9 +44,11 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         stationMap = stationMap();
         metroGraph = createGraph();
     }
+
+    /* helper functions */
     
-    //helper function to make http requests
-    public String HttpGetRequest(String uri) {
+    //make http requests
+    private String HttpGetRequest(String uri) {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -55,8 +62,8 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         return str;
     }
 
-    public JSONArray parseJSONArray(String str) {
-        //removes leading and end text/brackets to create json array with [] at start/end
+    //removes leading and end text/brackets to create json array with [] at start/end
+    private JSONArray parseJSONArray(String str) {
         while(str.charAt(0) != '[') {
             str = str.substring(1, str.length());
         }
@@ -66,33 +73,13 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         return jsonArr;
     }
 
-    private Map<String, String[]> lineEndpoints() {
-       Map<String, String[]> endpoints = new HashMap<>();
-        
-       String str = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jLines");
-       JSONArray jsonArr = parseJSONArray(str);
+    /* implementation logic */
 
-       for(Object obj : jsonArr) {
-        if(obj.getClass().equals(JSONObject.class)) {
-            JSONObject json = (JSONObject) obj;
-            String key = json.getString("LineCode");
-            String[] value = {
-                json.getString("StartStationCode"),
-                json.getString("EndStationCode")
-            };
-            endpoints.put(key, value);
-        }
-       }
-
-       return endpoints;
-    }
-
-    public Map<String, String[]> getLineEndpoints() {
-        return lineEndpoints;
-    }
-
-    
-    public Map<String, Station> stationMap() {
+    /**
+     * creates a map relating station codes to their respective Stations
+     * @return Map<String, Station>
+     */
+    private Map<String, Station> stationMap() {
         Map<String, Station> stationMap = new HashMap<>();
 
         String str = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jStations");
@@ -120,10 +107,50 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         return stationMap;
     }
 
-    public Map<String, Station> getStationMap() {
-        return stationMap;
+    /*
+     * functionally dependent methods, in order: 
+     * 
+     * 1. lineEndpoints()
+     * 2. getLine() (depends on 1)
+     * 3. getAllLines() (depends on 2) 
+     * 4. createGraph() (depends on 3)
+     * 5. generateRandomRoute(...) (depends on 4)
+     * 
+     * methods 1 and 4 are called upon object construction, 
+     * and ensures that the methods are called in the proper order
+    */
+
+
+    /**
+     * maps each line code to the station codes that begin and end each line
+     * @return Map<String, String[]>
+     */
+    private Map<String, String[]> lineEndpoints() {
+       Map<String, String[]> endpoints = new HashMap<>();
+        
+       String str = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jLines");
+       JSONArray jsonArr = parseJSONArray(str);
+
+       for(Object obj : jsonArr) {
+        if(obj.getClass().equals(JSONObject.class)) {
+            JSONObject json = (JSONObject) obj;
+            String key = json.getString("LineCode");
+            String[] value = {
+                json.getString("StartStationCode"),
+                json.getString("EndStationCode")
+            };
+            endpoints.put(key, value);
+        }
+       }
+
+       return endpoints;
     }
 
+    /**
+     * gets a line in order of physical location from start to end
+     * @param lineCode
+     * @return JSONArray from WPA API
+     */
     public JSONArray getLine(String lineCode) {
 
         String[] endpoints = lineEndpoints.get(lineCode);
@@ -138,6 +165,10 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     }
 
+    /**
+     * performs getLine calls on all pre-defined line codes
+     * @return List<JSONArray>: a list of all JSONArray objects from WPA API
+     */
     public List<JSONArray> getAllLines() {
 
         List<JSONArray> lines = new ArrayList<JSONArray>();
@@ -257,8 +288,15 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         return path.getVertexList();
     }
 
-    // public static void main(String[] args) {
-    //     MetroTransitSystemDAO metroDao = new MetroTransitSystemDAO();
-    // }
+    /* getters */
+
+    public Map<String, Station> getStationMap() {
+        return stationMap;
+    }
+    
+    public Map<String, String[]> getLineEndpoints() {
+        return lineEndpoints;
+    }
+
     
 }
