@@ -9,6 +9,14 @@
     - Using your primary key, create a new USER environment variable on your PC
     named 'metro_api_key' with the primary key as its value
 
+#### Adding a User Environment Variable (Windows10/11)
+- Press the windows key, search "env" and click the first result (edit the system environment variables)
+- In the System Properties window (Advanced Tab), select "Environment Variables"
+- Under User Variables, select "New"
+- Variable name should be "metro_api_key" and variable value should be your primary key
+- Click OK and confirm that your changes were saved
+
+
 2. Install a JDK
     - If you do not already have a JDK, you can download one **here** https://www.oracle.com/java/technologies/downloads/#java19
     - Download and run the installer for Java 19 for your system
