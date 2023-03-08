@@ -1,3 +1,0 @@
-In order to run this project, you need a WPA API key.
-You can add one by creating a System Environment Variable
-with the name "metro_api_key" and the value as your API key.
