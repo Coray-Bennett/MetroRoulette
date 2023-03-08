@@ -30,5 +30,4 @@
     - selectedLines: List of line codes (RD, GR, YL, etc) the route can end at (end station will be on one of these lines)
 - An example HTTP request:
     - http://localhost:8080/MetroRoulette/?startCode=A01&maxStops=5&selectedLines=RD,YL,OR&maxLength=60
-- A list of all the RED stations with their station codes can be found here: 
-https://developer.wmata.com/docs/services/5476364f031f590f38092507/operations/5476364f031f5909e4fe3311?
+- To list all of the stations with their station codes, use http://localhost:8080/MetroRoulette/stations (software like Insomnia might help format this https://insomnia.rest/download)

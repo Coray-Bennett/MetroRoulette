@@ -28,6 +28,26 @@ public class MetroRouletteController {
         this.transitDao = transitDao;
         this.stationMap = transitDao.getStationMap();
     }
+
+    @GetMapping("/stations")
+    public ResponseEntity<JsonStation[]> getAllStations() {
+        LOG.info("http://localhost:8080/MetroRoulette/stations");
+
+        try {
+            Map<String, Station> stationMap = transitDao.getStationMap();
+            List<JsonStation> jsonStationList = new ArrayList<JsonStation>();
+
+            for(Station station : stationMap.values()) {
+                jsonStationList.add(new JsonStation(station));
+            }
+            
+            return new ResponseEntity<JsonStation[]>(jsonStationList.toArray(new JsonStation[jsonStationList.size()]), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            LOG.log(Level.SEVERE, e.getLocalizedMessage());
+            return  new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     
     /**
      * Responds to the GET request with a random Station path that fits the specified parameters
