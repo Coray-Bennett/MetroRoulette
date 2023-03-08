@@ -1,6 +1,6 @@
 # Metro Roulette
 
-### How to Run
+### How to Run (Backend)
 
 1. Obtain a WPA API key. 
     - Navigate to https://developer.wmata.com/ and create a new account
