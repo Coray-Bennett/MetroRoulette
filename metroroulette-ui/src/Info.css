@@ -16,6 +16,27 @@ li {
     margin-top: 6rem;
 }
 
+@keyframes many-shadows {
+    0% {
+        box-shadow: 
+        0px 0px 0px var(--BL),
+        0px 0px 0px var(--GR),
+        0px 0px 0px var(--OR),
+        0px 0px 0px var(--RD),
+        0px 0px 0px var(--YL);
+        opacity: 0.15;
+    }
+    100% {
+        box-shadow: 
+        5px 5px 1px var(--BL),
+        10px 10px 1px var(--GR),
+        15px 15px 2px var(--OR),
+        20px 20px 2px var(--RD),
+        25px 25px 3px var(--YL);
+        opacity: 1;
+    }
+} 
+
 .info-modal {
     position: absolute;
     bottom: 20%;
@@ -29,14 +50,17 @@ li {
     font-size: 30px;
     font-weight: bold;
     width: 40%;
-    height: 45%;
+    height: 50%;
+    animation: many-shadows;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
 }
 
 @media screen and (max-width: 900px) {
     .info-modal {
         bottom: 0%;
         top: 50%;
-        height: 100%;
+        height: 90%;
 
     }
 }
@@ -49,7 +73,8 @@ li {
 }
 
 .icon {
-    margin-left: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
     margin-bottom: 15px;
 }
 

@@ -19,15 +19,15 @@ const Info = () => {
                 <ul>
                     <li>
                     <span className="mif-room icon"></span>
-                    <p>- The station you are currently at</p>
+                    <p> Current (starting) station</p>
                     </li>
                     <li>
                     <span className="mif-subway icon"></span>
-                    <p> - The maximum number of stops for your route</p>
+                    <p> Max number of stops on route</p>
                     </li>
                     <li>
                     <span className="mif-watch icon"></span>
-                    <p> - The maximum number of minutes for your route</p>
+                    <p> Max route length in minutes</p>
                     </li>
                 </ul> 
             </Modal.Body>
