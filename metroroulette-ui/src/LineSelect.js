@@ -1,10 +1,11 @@
+import { useState } from "react";
 
-
-const LineSelect = ({source, desc}) => {
+const LineSelect = ({source, desc, selected, onClick}) => {
 
     return (
         <>
-        <img width="50px" src={source} alt={desc}></img>
+        <img width="50px" src={source} alt={desc} onClick={onClick}
+            style={{opacity: selected ? 1 : 0.5}}></img>
         </>
     )
 }
