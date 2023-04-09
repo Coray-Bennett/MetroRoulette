@@ -1,0 +1,8 @@
+
+.info {
+    font-size: 24px;
+    color: var(--YL);
+    background-color: transparent;
+    border-style: none;
+    margin-top: 6rem;
+}

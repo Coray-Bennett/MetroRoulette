@@ -33,13 +33,6 @@
     margin-right: 60px;
 }
 
-@media screen and (max-width: 900px) {
-    .max-input {
-        flex-direction: column;
-        max-width: 100%;
-    }
-}
-
 .input-field {
     font-size: 30px;
     color: var(--YL);
