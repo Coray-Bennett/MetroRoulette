@@ -1,0 +1,22 @@
+.title {
+  text-align: center;
+  color: black;
+  background-color: bisque;
+  border-radius: 15px;
+  border-style: solid;
+  border-width: 2px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 0 auto;
+  max-width: 25%;
+}
+
+.many-shadows {
+  text-shadow: 
+  1px 1px 0px 
+  ;
+}
+
+.App {
+  text-align: center;
+}
