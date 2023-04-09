@@ -3,7 +3,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <h1 className="title">Metro Roulette</h1>
+      <h1 className="title noselect">METRO ROULETTE</h1>
     </div>
   );
 }
