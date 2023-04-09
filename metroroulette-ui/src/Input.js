@@ -15,17 +15,19 @@ const Input = () => {
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
 
-    function updateLines(index, line) {
-        let newSelected = selected;
+    function updateLines(index, value) {
+        if(lines.size === 1 && lines.has(value)) {return;}
+
+        let newSelected = selected.slice();
         newSelected[index] = !newSelected[index];
         setSelected(newSelected);
 
-        let newLines = lines;
-        if(newLines.has(line)) {
-            newLines.delete(line);
+        let newLines = new Set(lines);
+        if(newLines.has(value)) {
+            newLines.delete(value);
         }
         else {
-            newLines.add(line);
+            newLines.add(value);
         }
         setLines(newLines);
     }
@@ -48,7 +50,6 @@ const Input = () => {
             <LineSelect selected={selected[4]} className="line" source={SilverLine} desc="Silver Line" onClick={() => updateLines(4, "SV")}/>
             <LineSelect selected={selected[5]} className="line" source={YellowLine} desc="Yellow Line" onClick={() => updateLines(5, "YL")}/>
         </div>
-        <p>{lines}</p>
         </>
     )
 }
