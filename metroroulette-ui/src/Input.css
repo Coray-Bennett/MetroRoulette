@@ -1,0 +1,28 @@
+.text-input {
+    border-radius: 0%;
+    border-style: none;
+}
+
+.station-input {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.lines-input {
+    display: flex;
+    margin: 0 auto;
+    margin-top: 1em;
+    max-width: 33%;
+    justify-content: space-evenly;
+}
+
+#search {
+    font-size: 30px;
+    color: var(--YL);
+    background-color: transparent;
+    border-style: solid;
+    border-color: var(--YL);
+}

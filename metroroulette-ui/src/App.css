@@ -3,7 +3,6 @@
   text-align: center;
 }
 
-
 @keyframes title-colors {
   0% {
   text-shadow: 
@@ -24,18 +23,24 @@
 }
 
 .title {
-  text-align: center;
   color: var(--YL);
   font-size: 36pt;
   border-width: 2px;
   padding-top: 10px;
   padding-bottom: 10px;
   margin: 0 auto;
+  margin-bottom: 60px;
   max-width: 100%;
   animation-name: title-colors;
   animation-duration: 5s;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
   /* animation-direction: alternate; */
+}
+
+@media screen and (max-width: 900px) {
+  .title {
+    font-size: 24pt;
+  }
 }
 
