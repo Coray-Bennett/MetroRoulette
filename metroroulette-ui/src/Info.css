@@ -1,8 +1,61 @@
 
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: flex;
+    align-items: baseline;
+}
+
 .info {
     font-size: 24px;
     color: var(--YL);
     background-color: transparent;
     border-style: none;
     margin-top: 6rem;
+}
+
+.info-modal {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--SECOND-DARK-BLUE);
+    background-color: lightgray;
+    border-radius: 0.5em;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    width: 40%;
+    height: 45%;
+}
+
+@media screen and (max-width: 900px) {
+    .info-modal {
+        bottom: 0%;
+        top: 50%;
+        height: 100%;
+
+    }
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: 18px;
+}
+
+.icon {
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.close {
+    font-size: 30px;
+    color: var(--SECOND-DARK-BLUE);
+    background-color: transparent;
+    border-style: none;
 }
