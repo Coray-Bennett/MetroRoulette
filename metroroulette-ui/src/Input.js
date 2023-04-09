@@ -37,7 +37,7 @@ const Input = () => {
         <datalist id="stations"></datalist>
         <div className="station-input">
             <span className="mif-room"></span>
-            <input id="search" type="search" list="stations" value={stationCode}
+            <input className="input-field" type="search" list="stations" value={stationCode}
                 onChange={(e) => setStationCode(e.target.value)}>
             </input>
         </div>
@@ -50,6 +50,22 @@ const Input = () => {
             <LineSelect selected={selected[4]} className="line" source={SilverLine} desc="Silver Line" onClick={() => updateLines(4, "SV")}/>
             <LineSelect selected={selected[5]} className="line" source={YellowLine} desc="Yellow Line" onClick={() => updateLines(5, "YL")}/>
         </div>
+
+        <div className="max-input">
+            <div className="sub-input">
+            <span className="mif-subway"></span>
+            <input type="number" className="input-field"></input>
+            </div>
+            <div className="sub-input">
+            <span className="mif-watch"></span>
+            <input type="number" className="input-field"></input>
+            </div>
+            
+        </div>
+
+        <button className="submit-button">
+            <span className="mif-dice"></span>
+        </button>
         </>
     )
 }
