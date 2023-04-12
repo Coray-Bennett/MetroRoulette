@@ -41,7 +41,7 @@ const Input = () => {
         setLines(newLines);
     }
 
-    function get(endpoint) {
+    async function get(endpoint) {
         fetch(endpoint)
         .then((res) => res.json())
         .then((data) => {
@@ -55,7 +55,9 @@ const Input = () => {
 
     function handleSubmit() {
         //get('http://localhost:8080/MetroRoulette/stations')
-        console.log(stations[0]);
+        for(let index in stations){
+            console.log(stations[index].name);
+        }
     }
 
     return (
