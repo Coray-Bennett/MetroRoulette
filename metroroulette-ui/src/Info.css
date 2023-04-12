@@ -3,9 +3,16 @@ ul {
     list-style-type: none;
 }
 
+@media screen and (max-width: 900px) {
+    ul {
+        margin-left: -15%;
+    }
+}
+
 li {
     display: flex;
     align-items: baseline;
+    max-width: 75%;
 }
 
 .info {
@@ -52,15 +59,20 @@ li {
     width: 40%;
     height: 50%;
     animation: many-shadows;
-    animation-duration: 1s;
+    animation-duration: 0.75s;
     animation-fill-mode: forwards;
+}
+
+.animation-reverse {
+    animation-iteration-count: 2;
+    animation-direction: reverse;
 }
 
 @media screen and (max-width: 900px) {
     .info-modal {
         bottom: 0%;
-        top: 50%;
-        height: 90%;
+        top: 40%;
+        height: 66%;
 
     }
 }
@@ -73,7 +85,7 @@ li {
 }
 
 .icon {
-    margin-left: 5px;
+    margin-left: 0px;
     margin-right: 5px;
     margin-bottom: 15px;
 }

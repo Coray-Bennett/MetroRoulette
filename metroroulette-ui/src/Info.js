@@ -1,16 +1,14 @@
 import './Info.css';
-import { useState } from 'react';
+import { useState, React } from 'react';
 import { Modal, Button } from "react-bootstrap";
 
 const Info = () => {
     const [showModal, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     return (
-        <> 
-
+        <>
         <Modal className="info-modal" show={showModal} onHide={handleClose}>
             <Modal.Header>
             <Modal.Title>INFO</Modal.Title>

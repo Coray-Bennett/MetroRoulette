@@ -42,7 +42,7 @@ const Input = () => {
             </input>
         </div>
         
-        <div className="lines-input">
+        <div className="lines-input noselect">
             <LineSelect selected={selected[0]} className="line" source={RedLine} desc="Red Line" onClick={() => updateLines(0, "RD")}/>
             <LineSelect selected={selected[1]} className="line" source={GreenLine} desc="Green Line" onClick={() => updateLines(1, "GR")}/>
             <LineSelect selected={selected[2]} className="line" source={OrangeLine} desc="Orange Line" onClick={() => updateLines(2, "OR")}/>
