@@ -1,5 +1,5 @@
 import './Input.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LineSelect from './LineSelect';
 import RedLine from './images/WMATA_Red.svg';
 import GreenLine from './images/WMATA_Green.svg';
@@ -11,10 +11,18 @@ import YellowLine from './images/WMATA_Yellow.svg';
 
 const Input = () => {
 
+    const [stations, setStations] = useState(null);
     const [stationCode, setStationCode] = useState("");
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
-    const [result, setResult] = useState(null);
+    
+    useEffect( () =>  {
+        let tried = false;
+        if(stations == null && !tried) {
+            get('http://localhost:8080/MetroRoulette/stations');
+            tried = true;
+        }
+    });
 
     function updateLines(index, value) {
         if(lines.size === 1 && lines.has(value)) {return;}
@@ -37,7 +45,7 @@ const Input = () => {
         fetch(endpoint)
         .then((res) => res.json())
         .then((data) => {
-            setResult(data);
+            setStations(data);
             console.log(data);
         })
         .catch((err) => {
@@ -46,7 +54,8 @@ const Input = () => {
     }
 
     function handleSubmit() {
-        get('http://localhost:8080/MetroRoulette/stations')
+        //get('http://localhost:8080/MetroRoulette/stations')
+        console.log(stations[0]);
     }
 
     return (
