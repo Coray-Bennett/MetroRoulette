@@ -46,7 +46,7 @@ const Input = () => {
     }
 
     function handleSubmit() {
-        get('https://jsonplaceholder.typicode.com/posts')
+        get('http://localhost:8080/MetroRoulette/stations')
     }
 
     return (
