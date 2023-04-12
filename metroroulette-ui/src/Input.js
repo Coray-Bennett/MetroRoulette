@@ -14,6 +14,7 @@ const Input = () => {
     const [stationCode, setStationCode] = useState("");
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
+    const [result, setResult] = useState(null);
 
     function updateLines(index, value) {
         if(lines.size === 1 && lines.has(value)) {return;}
@@ -30,6 +31,22 @@ const Input = () => {
             newLines.add(value);
         }
         setLines(newLines);
+    }
+
+    function get(endpoint) {
+        fetch(endpoint)
+        .then((res) => res.json())
+        .then((data) => {
+            setResult(data);
+            console.log(data);
+        })
+        .catch((err) => {
+            console.log(err.message);
+            });
+    }
+
+    function handleSubmit() {
+        get('https://jsonplaceholder.typicode.com/posts')
     }
 
     return (
@@ -63,7 +80,7 @@ const Input = () => {
             
         </div>
 
-        <button className="submit-button">
+        <button className="submit-button" onClick={handleSubmit}>
             <span className="mif-dice"></span>
         </button>
         </>
