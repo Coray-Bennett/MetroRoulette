@@ -11,21 +11,25 @@ import YellowLine from './images/WMATA_Yellow.svg';
 
 const Input = () => {
 
+    const [stationMap, setStationMap] = useState(new Map());
     const [options, setOptions] = useState(null);
     const [stationCode, setStationCode] = useState("");
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
 
-    const processStations = useCallback( (newStations) => {
+    const processStations = useCallback( (stations) => {
         let stationsSet = new Set();
+        let newStationMap = new Map();
 
-        for(let index in newStations) {
-            stationsSet.add(newStations[index].name);
+        for(let index in stations) {
+            stationsSet.add(stations[index].name);
+            newStationMap.set(stations[index].name, stations[index]);
         }
 
         let newOptions = [...stationsSet].map((name) =>
            <option key={name} value={name}></option>);
         setOptions(newOptions);
+        setStationMap(newStationMap);
     }, []);
     
     useEffect( () =>  {
@@ -65,7 +69,7 @@ const Input = () => {
     }
 
     function handleSubmit() {
-        console.log(stationCode);
+        console.log(stationMap.get(stationCode));
     }
 
     return (
