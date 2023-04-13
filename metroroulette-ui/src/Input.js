@@ -1,5 +1,5 @@
 import './Input.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import LineSelect from './LineSelect';
 import RedLine from './images/WMATA_Red.svg';
 import GreenLine from './images/WMATA_Green.svg';
@@ -11,18 +11,30 @@ import YellowLine from './images/WMATA_Yellow.svg';
 
 const Input = () => {
 
-    const [stations, setStations] = useState(null);
+    const [options, setOptions] = useState(null);
     const [stationCode, setStationCode] = useState("");
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
+
+    const processStations = useCallback( (newStations) => {
+        let stationsSet = new Set();
+
+        for(let index in newStations) {
+            stationsSet.add(newStations[index].name);
+        }
+
+        let newOptions = [...stationsSet].map((name) =>
+           <option key={name} value={name}></option>);
+        setOptions(newOptions);
+    }, []);
     
     useEffect( () =>  {
         let tried = false;
-        if(stations == null && !tried) {
-            get('http://localhost:8080/MetroRoulette/stations');
+        if(!tried) {
+            get('http://localhost:8080/MetroRoulette/stations', processStations);
             tried = true;
         }
-    });
+    }, [processStations]);
 
     function updateLines(index, value) {
         if(lines.size === 1 && lines.has(value)) {return;}
@@ -41,12 +53,11 @@ const Input = () => {
         setLines(newLines);
     }
 
-    async function get(endpoint) {
+    function get(endpoint, set) {
         fetch(endpoint)
         .then((res) => res.json())
         .then((data) => {
-            setStations(data);
-            console.log(data);
+            set(data);
         })
         .catch((err) => {
             console.log(err.message);
@@ -54,15 +65,14 @@ const Input = () => {
     }
 
     function handleSubmit() {
-        //get('http://localhost:8080/MetroRoulette/stations')
-        for(let index in stations){
-            console.log(stations[index].name);
-        }
+        console.log(stationCode);
     }
 
     return (
         <>
-        <datalist id="stations"></datalist>
+        <datalist id="stations">
+            {options}
+        </datalist>
         <div className="station-input">
             <span className="mif-room"></span>
             <input className="input-field" type="search" list="stations" value={stationCode}
