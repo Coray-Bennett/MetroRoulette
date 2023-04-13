@@ -16,6 +16,10 @@ const Input = () => {
     const [stationCode, setStationCode] = useState("");
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
+    const [maxStops, setMaxStops] = useState(0);
+    const [maxMinutes, setMaxMinutes] = useState(0);
+
+    const [pathResult, setPathResult] = useState(null);
 
     const processStations = useCallback( (stations) => {
         let stationsSet = new Set();
@@ -70,6 +74,9 @@ const Input = () => {
 
     function handleSubmit() {
         console.log(stationMap.get(stationCode));
+        console.log(lines);
+        console.log(maxStops);
+        console.log(maxMinutes);
     }
 
     return (
@@ -96,11 +103,11 @@ const Input = () => {
         <div className="max-input">
             <div className="sub-input">
             <span className="mif-subway"></span>
-            <input type="number" className="input-field"></input>
+            <input type="number" className="input-field" value={maxStops} onChange={(e) => setMaxStops(e.target.value)}></input>
             </div>
             <div className="sub-input">
             <span className="mif-watch"></span>
-            <input type="number" className="input-field"></input>
+            <input type="number" className="input-field" value={maxMinutes} onChange={(e) => setMaxMinutes(e.target.value)}></input>
             </div>
             
         </div>
