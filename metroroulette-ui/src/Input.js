@@ -8,12 +8,13 @@ import BlueLine from './images/WMATA_Blue.svg';
 import SilverLine from './images/WMATA_Silver.svg';
 import YellowLine from './images/WMATA_Yellow.svg';
 
+const PATH = 'http://localhost:8080';
 
 const Input = () => {
 
     const [stationMap, setStationMap] = useState(new Map());
     const [options, setOptions] = useState(null);
-    const [stationCode, setStationCode] = useState("");
+    const [stationName, setStationName] = useState("");
     const [selected, setSelected] = useState(Array(6).fill(true));
     const [lines, setLines] = useState(new Set(["RD", "GR", "OR", "BL", "SV", "YL"]));
     const [maxStops, setMaxStops] = useState(0);
@@ -39,7 +40,7 @@ const Input = () => {
     useEffect( () =>  {
         let tried = false;
         if(!tried) {
-            get('http://localhost:8080/MetroRoulette/stations', processStations);
+            get(PATH + '/MetroRoulette/stations', processStations);
             tried = true;
         }
     }, [processStations]);
@@ -66,6 +67,7 @@ const Input = () => {
         .then((res) => res.json())
         .then((data) => {
             set(data);
+            console.log(data);
         })
         .catch((err) => {
             console.log(err.message);
@@ -73,10 +75,21 @@ const Input = () => {
     }
 
     function handleSubmit() {
-        console.log(stationMap.get(stationCode));
-        console.log(lines);
-        console.log(maxStops);
-        console.log(maxMinutes);
+        if(stationMap.get(stationName) === undefined) {
+            return;
+        }
+        let stationCode = stationMap.get(stationName).codes.split(",")[0];
+        let lines_str = "";
+        lines.forEach((line) => lines_str += line + ",")
+        lines_str = lines_str.slice(0, -1);
+
+        let request = "";
+        request += "?startCode=" + stationCode;
+        request += "&maxStops=" + maxStops;
+        request += "&selectedLines=" + lines_str;
+        request += "&maxLength=" + maxMinutes;
+
+        get(PATH + '/MetroRoulette/' + request, setPathResult);
     }
 
     return (
@@ -86,8 +99,8 @@ const Input = () => {
         </datalist>
         <div className="station-input">
             <span className="mif-room"></span>
-            <input className="input-field" type="search" list="stations" value={stationCode}
-                onChange={(e) => setStationCode(e.target.value)}>
+            <input className="input-field" type="search" list="stations" value={stationName}
+                placeholder='Starting Station' onChange={(e) => setStationName(e.target.value)}>
             </input>
         </div>
         

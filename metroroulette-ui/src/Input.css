@@ -3,6 +3,21 @@
     border-style: none;
 }
 
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: var(--SECOND-YELLOW);
+    opacity: 0.6;
+  }
+  
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+color: var(--SECOND-YELLOW);
+opacity: 0.6;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+color: var(--SECOND-YELLOW);
+opacity: 0.6;
+}
+
 .station-input {
     width: fit-content;
     max-width: 80%;
