@@ -79,8 +79,34 @@ const Input = () => {
         let result = [];
         
         for(let i in pathResult) {
-            let station = pathResult[i];
-            result.push(station.name + " (" + station.lineCodes + ")");
+            i = parseInt(i);
+            const station = pathResult[i];
+            const lineCodes = station.lineCodes.split(",");
+
+            result.push(station.name + " (" + lineCodes + ")");
+
+            if( i-1 < 0 ||  i+1 > pathResult.length - 1) {
+                continue;
+            }
+
+            const prevStation = pathResult[i-1];
+            const prevLineCodes = prevStation.lineCodes.split(",");
+
+            const nextStation = pathResult[i+1];
+            const nextLineCodes = nextStation.lineCodes.split(",");
+
+            let transfer = true;
+
+            for(let j in prevLineCodes) {
+                j = parseInt(j);
+                if (nextLineCodes.includes(prevLineCodes[j])) {
+                    transfer = false;
+                }
+            }
+
+            if(transfer) {
+                result.push("TRANSFER LINES: " + lineCodes + " -> " + nextLineCodes);
+            }
         }
 
         setPathDisplay(result);
@@ -143,7 +169,7 @@ const Input = () => {
         </button>
 
         <div className="route">
-            <p>{pathDisplay}</p>
+            {pathDisplay.map((station, key) => (<p key={key}>{station}</p>))}
         </div>
         </>
     )
