@@ -64,6 +64,9 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     //removes leading and end text/brackets to create json array with [] at start/end
     private JSONArray parseJSONArray(String str) {
+        if(str.length() == 0) {
+            return null;
+        }
         while(str.charAt(0) != '[') {
             str = str.substring(1, str.length());
         }
