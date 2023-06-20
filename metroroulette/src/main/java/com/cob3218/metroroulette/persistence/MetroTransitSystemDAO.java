@@ -174,7 +174,8 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         List<JSONArray> lines = new ArrayList<JSONArray>();
 
         for(String lineCode : LINE_CODES) {
-            lines.add(getLine(lineCode));
+            JSONArray line = getLine(lineCode);
+            lines.add(line);
         }
 
         return lines;
@@ -229,6 +230,10 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         final double AVG_SPEED_MPH = 33;
         final double FT_IN_MILE = 5280;
 
+        if(!metroGraph.containsVertex(start)) {
+            return null;
+        }
+
         if(selectedLines == null) {
             selectedLines = LINE_CODES;
         }   
@@ -260,6 +265,10 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         && (path == null || path.getLength() > maxStops || pathLengthMinutes > maxLengthMinutes) )  {
             
             Station destination = (Station) validStations.toArray()[random.nextInt(validStations.size())];
+            if(!metroGraph.containsVertex(destination)) {
+                validStations.remove(destination);
+                continue;
+            }
             path = dijk.getPath(start, destination);
 
             //a change in the current lines you are on implies you will be waiting for another train car

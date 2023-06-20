@@ -45,7 +45,11 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testCreateGraph() {
+    public void testCreateGraph() { 
+        /*NOTE: this test currently fails because of a mistake in the WMATA API,
+         * because the Silver line has the incorrect StartStationCode value,
+         * so the graph constructs based on that incorrect starting point.
+        */
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
         for(Station station : stationMap.values()) {
