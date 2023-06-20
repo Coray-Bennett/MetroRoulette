@@ -5,9 +5,6 @@ const Route = (stationList) => {
 
     return (
         <>
-
-        
-
         </>
     )
 }

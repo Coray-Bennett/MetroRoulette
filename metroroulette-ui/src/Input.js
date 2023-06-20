@@ -7,6 +7,7 @@ import OrangeLine from './images/WMATA_Orange.svg';
 import BlueLine from './images/WMATA_Blue.svg';
 import SilverLine from './images/WMATA_Silver.svg';
 import YellowLine from './images/WMATA_Yellow.svg';
+import Route from './Route';
 
 const PATH = 'http://localhost:8080';
 
@@ -20,7 +21,8 @@ const Input = () => {
     const [maxStops, setMaxStops] = useState(0);
     const [maxMinutes, setMaxMinutes] = useState(0);
 
-    const [pathResult, setPathResult] = useState(null);
+    const [pathResult, setPathResult] = useState([]);
+    const [pathDisplay, setPathDisplay] = useState([]);
 
     const processStations = useCallback( (stations) => {
         let stationsSet = new Set();
@@ -67,11 +69,21 @@ const Input = () => {
         .then((res) => res.json())
         .then((data) => {
             set(data);
-            console.log(data);
         })
         .catch((err) => {
             console.log(err.message);
             });
+    }
+
+    function parsePathResult() {
+        let result = [];
+        
+        for(let i in pathResult) {
+            let station = pathResult[i];
+            result.push(station.name + " (" + station.lineCodes + ")");
+        }
+
+        setPathDisplay(result);
     }
 
     function handleSubmit() {
@@ -90,6 +102,7 @@ const Input = () => {
         request += "&maxLength=" + maxMinutes;
 
         get(PATH + '/MetroRoulette/' + request, setPathResult);
+        parsePathResult();
     }
 
     return (
@@ -128,6 +141,10 @@ const Input = () => {
         <button className="submit-button" onClick={handleSubmit}>
             <span className="mif-dice"></span>
         </button>
+
+        <div className="route">
+            <p>{pathDisplay}</p>
+        </div>
         </>
     )
 }
