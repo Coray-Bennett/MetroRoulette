@@ -18,6 +18,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import com.cob3218.metroroulette.model.Station;
@@ -34,12 +35,17 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     private Map<String, Station> stationMap;
     private Graph<Station, DefaultWeightedEdge> metroGraph;
 
+    private String stationsJSON;
+    private String linesJSON;
+
     private String api_key;
 
     public final String[] LINE_CODES = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
-    public MetroTransitSystemDAO() {
+    public MetroTransitSystemDAO() throws InterruptedException {
         api_key = System.getenv("metro_api_key");
+        stationsJSON = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jStations");
+        linesJSON = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jLines");
         lineEndpoints = lineEndpoints();
         stationMap = stationMap();
         metroGraph = createGraph();
@@ -48,7 +54,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     /* helper functions */
     
     //make http requests
-    private String HttpGetRequest(String uri) {
+    private String HttpGetRequest(String uri) throws InterruptedException {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -57,16 +63,23 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
         
         String str = client.sendAsync(request, BodyHandlers.ofString())
          .join()
-         .body(); 
-
+         .body();
+        
+        JSONObject json = new JSONObject(str);
+        try {
+            Object statusCode = json.get("statusCode");
+            if(statusCode.equals(429)) {
+                Thread.sleep(1000);
+                return HttpGetRequest(uri);
+            }
+        }
+        catch(JSONException e) {}
         return str;
     }
 
     //removes leading and end text/brackets to create json array with [] at start/end
     private JSONArray parseJSONArray(String str) {
-        if(str.length() == 0) {
-            return null;
-        }
+
         while(str.charAt(0) != '[') {
             str = str.substring(1, str.length());
         }
@@ -85,7 +98,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     private Map<String, Station> stationMap() {
         Map<String, Station> stationMap = new HashMap<>();
 
-        String str = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jStations");
+        String str = stationsJSON;
         JSONArray jsonArr = parseJSONArray(str);
 
         for(Object obj : jsonArr) {
@@ -131,7 +144,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     private Map<String, String[]> lineEndpoints() {
        Map<String, String[]> endpoints = new HashMap<>();
         
-       String str = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jLines");
+       String str = linesJSON;
        JSONArray jsonArr = parseJSONArray(str);
 
        for(Object obj : jsonArr) {
@@ -153,8 +166,9 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
      * gets a line in order of physical location from start to end
      * @param lineCode
      * @return JSONArray from WPA API
+     * @throws InterruptedException
      */
-    public JSONArray getLine(String lineCode) {
+    public JSONArray getLine(String lineCode) throws InterruptedException {
 
         String[] endpoints = lineEndpoints.get(lineCode);
 
@@ -171,8 +185,9 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     /**
      * performs getLine calls on all pre-defined line codes
      * @return List<JSONArray>: a list of all JSONArray objects from WPA API
+     * @throws InterruptedException
      */
-    public List<JSONArray> getAllLines() {
+    public List<JSONArray> getAllLines() throws InterruptedException {
 
         List<JSONArray> lines = new ArrayList<JSONArray>();
 
@@ -185,7 +200,7 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
     }
 
     @Override
-    public Graph<Station, DefaultWeightedEdge> createGraph() {
+    public Graph<Station, DefaultWeightedEdge> createGraph() throws InterruptedException {
         
         Graph<Station, DefaultWeightedEdge> metroGraph = new WeightedMultigraph<>(DefaultWeightedEdge.class);
         List<JSONArray> lines = getAllLines();

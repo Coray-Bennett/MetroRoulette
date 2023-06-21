@@ -25,8 +25,9 @@ public interface TransitSystemDAO {
      * Creates a weighted graph using JGraphT that represents all connections between
      * different stations and the distances between them
      * @return Graph<Station, DefaultWeightedEdge> representing a transit system
+     * @throws InterruptedException
      */
-    Graph<Station, DefaultWeightedEdge> createGraph();
+    Graph<Station, DefaultWeightedEdge> createGraph() throws InterruptedException;
 
     /**
      * Using the weighted graph of a Transit System, generates a random valid route

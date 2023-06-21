@@ -26,7 +26,7 @@ public class MetroTransitSystemDAOTest {
     MetroTransitSystemDAO metroDao;
 
     @BeforeEach
-    public void setupMetroDAO() {
+    public void setupMetroDAO() throws InterruptedException {
         metroDao = new MetroTransitSystemDAO();
     }
     
@@ -38,7 +38,7 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testGetLine() {
+    public void testGetLine() throws InterruptedException {
         JSONArray redLine = metroDao.getLine("RD");
         assertTrue(redLine.getJSONObject(0).getString("StationCode").equals("A15"));
         assertTrue(redLine.getJSONObject(redLine.length()-1).getString("StationCode").equals("B11"));
@@ -60,7 +60,7 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testMetroGraphSameLine() {
+    public void testMetroGraphSameLine() throws InterruptedException {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
@@ -72,7 +72,7 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testMetroGraphValidConnections() {
+    public void testMetroGraphValidConnections() throws InterruptedException {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
@@ -91,7 +91,7 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testMetroGraphInvalidConnections() {
+    public void testMetroGraphInvalidConnections() throws InterruptedException {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
@@ -110,7 +110,7 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testMetroGraphSameLinePathIsCorrect() {
+    public void testMetroGraphSameLinePathIsCorrect() throws InterruptedException {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
@@ -144,7 +144,7 @@ public class MetroTransitSystemDAOTest {
 
 
     @Test
-    public void testMetroGraphDifferentLine() {
+    public void testMetroGraphDifferentLine() throws InterruptedException {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
@@ -156,7 +156,7 @@ public class MetroTransitSystemDAOTest {
     }
 
     @Test
-    public void testMetroGraphSameStationDifferentCode() {
+    public void testMetroGraphSameStationDifferentCode() throws InterruptedException {
         Graph<Station, DefaultWeightedEdge> graph = metroDao.createGraph();
         Map<String, Station> stationMap = metroDao.getStationMap();
 
