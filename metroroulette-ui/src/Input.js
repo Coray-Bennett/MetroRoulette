@@ -21,8 +21,9 @@ const Input = () => {
     const [maxStops, setMaxStops] = useState(0);
     const [maxMinutes, setMaxMinutes] = useState(0);
 
-    const [pathResult, setPathResult] = useState([]);
     const [pathDisplay, setPathDisplay] = useState([]);
+
+    const [showRoute, setShowRoute] = useState(false);
 
     const processStations = useCallback( (stations) => {
         let stationsSet = new Set();
@@ -64,35 +65,42 @@ const Input = () => {
         setLines(newLines);
     }
 
-    function get(endpoint, set) {
+    function get(endpoint, parse) {
         fetch(endpoint)
         .then((res) => res.json())
         .then((data) => {
-            set(data);
+            parse(data);
         })
         .catch((err) => {
             console.log(err.message);
             });
     }
 
-    function parsePathResult() {
+    function parsePathResult(rawPath) {
+        console.log("parse");
+        console.log(rawPath);
         let result = [];
-        
-        for(let i in pathResult) {
+        let numberStops = 1;
+
+        for(let i in rawPath) {
             i = parseInt(i);
-            const station = pathResult[i];
+            const station = rawPath[i];
             const lineCodes = station.lineCodes.split(",");
 
-            result.push(station.name + " (" + lineCodes + ")");
-
-            if( i-1 < 0 ||  i+1 > pathResult.length - 1) {
+            if(i-1 < 0) {
+                result.push(station.name + " " + lineCodes);
                 continue;
             }
 
-            const prevStation = pathResult[i-1];
+            if(i+1 > rawPath.length - 1) {
+                result.push(numberStops + " STOPS TO " + station.name + " " + lineCodes);
+                break;
+            }
+
+            const prevStation = rawPath[i-1];
             const prevLineCodes = prevStation.lineCodes.split(",");
 
-            const nextStation = pathResult[i+1];
+            const nextStation = rawPath[i+1];
             const nextLineCodes = nextStation.lineCodes.split(",");
 
             let transfer = true;
@@ -105,11 +113,17 @@ const Input = () => {
             }
 
             if(transfer) {
-                result.push("TRANSFER LINES: " + lineCodes + " -> " + nextLineCodes);
+                result.push(numberStops + " STOPS TO " + station.name + " " + lineCodes);
+                result.push("TRANSFER " + prevLineCodes + " " + nextLineCodes);
+                numberStops = 1;
+            }
+            else {
+                numberStops++;
             }
         }
 
         setPathDisplay(result);
+        setShowRoute(true);
     }
 
     function handleSubmit() {
@@ -127,8 +141,7 @@ const Input = () => {
         request += "&selectedLines=" + lines_str;
         request += "&maxLength=" + maxMinutes;
 
-        get(PATH + '/MetroRoulette/' + request, setPathResult);
-        parsePathResult();
+        get(PATH + '/MetroRoulette/' + request, parsePathResult);
     }
 
     return (
@@ -168,9 +181,7 @@ const Input = () => {
             <span className="mif-dice"></span>
         </button>
 
-        <div className="route">
-            {pathDisplay.map((station, key) => (<p key={key}>{station}</p>))}
-        </div>
+        <Route path={pathDisplay} visible={showRoute} handleClose={() => setShowRoute(false)}></Route>
         </>
     )
 }

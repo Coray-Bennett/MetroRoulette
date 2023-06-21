@@ -1,4 +1,5 @@
 import './Info.css';
+import './Modal.css';
 import { useState, React } from 'react';
 import { Modal, Button } from "react-bootstrap";
 
@@ -9,7 +10,7 @@ const Info = () => {
 
     return (
         <>
-        <Modal className="info-modal" show={showModal} onHide={handleClose}>
+        <Modal className="modal" show={showModal} onHide={handleClose}>
             <Modal.Header>
             <Modal.Title>INFO</Modal.Title>
             </Modal.Header>
