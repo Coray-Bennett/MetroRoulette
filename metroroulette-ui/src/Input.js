@@ -77,8 +77,6 @@ const Input = () => {
     }
 
     function parsePathResult(rawPath) {
-        console.log("parse");
-        console.log(rawPath);
         let result = [];
         let numberStops = 1;
 
