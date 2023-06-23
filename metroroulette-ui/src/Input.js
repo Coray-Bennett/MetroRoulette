@@ -9,7 +9,7 @@ import SilverLine from './images/WMATA_Silver.svg';
 import YellowLine from './images/WMATA_Yellow.svg';
 import Route from './Route';
 
-const PATH = 'http://localhost:8080';
+const PATH = 'http://MetroRoulette-env.eba-nkjqcn2w.us-east-2.elasticbeanstalk.com';
 
 const Input = () => {
 
@@ -41,11 +41,7 @@ const Input = () => {
     }, []);
     
     useEffect( () =>  {
-        let tried = false;
-        if(!tried) {
-            get(PATH + '/MetroRoulette/stations', processStations);
-            tried = true;
-        }
+        get(PATH + '/MetroRoulette/stations', processStations);
     }, [processStations]);
 
     function updateLines(index, value) {
