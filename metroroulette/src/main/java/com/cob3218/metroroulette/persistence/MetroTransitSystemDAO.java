@@ -20,6 +20,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import com.cob3218.metroroulette.model.Station;
 
@@ -37,13 +38,14 @@ public class MetroTransitSystemDAO implements TransitSystemDAO {
 
     private String stationsJSON;
     private String linesJSON;
-
+    
+    @Value("${api_key}")
     private String api_key;
 
     public final String[] LINE_CODES = {"RD", "BL", "YL", "OR", "GR", "SV"};
 
-    public MetroTransitSystemDAO() throws InterruptedException {
-        api_key = System.getenv("metro_api_key");
+    public MetroTransitSystemDAO(@Value("${api_key}") String api_key) throws InterruptedException {
+        this.api_key = api_key;
         stationsJSON = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jStations");
         linesJSON = HttpGetRequest("https://api.wmata.com/Rail.svc/json/jLines");
         lineEndpoints = lineEndpoints();

@@ -15,19 +15,22 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.TestPropertySource;
 
 import com.cob3218.metroroulette.model.Station;
 import com.cob3218.metroroulette.persistence.MetroTransitSystemDAO;
 
 
 @Testable
+@TestPropertySource("classpath:/application.properties")
 public class MetroTransitSystemDAOTest {
 
     MetroTransitSystemDAO metroDao;
 
     @BeforeEach
     public void setupMetroDAO() throws InterruptedException {
-        metroDao = new MetroTransitSystemDAO();
+        metroDao = new MetroTransitSystemDAO("9960c138fb2e48fcbb0e6bf41ce573db");
     }
     
     @Test
