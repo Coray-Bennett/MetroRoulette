@@ -1,0 +1,45 @@
+
+.App {
+  text-align: center;
+}
+
+@keyframes title-colors {
+  0% {
+  text-shadow: 
+  0px 0px 1px var(--RD),
+  0px 0px 1px var(--OR),
+  0px 0px 2px var(--GR),
+  0px 0px 2px var(--BL),
+  0px 0px 3px var(--SV),
+  }
+  100% {
+    text-shadow: 
+    0px 10px 1px var(--RD),
+    0px 20px 1px var(--OR),
+    0px 30px 2px var(--GR),
+    0px 40px 2px var(--BL),
+    0px 50px 3px var(--SV);
+  }
+}
+
+.title {
+  color: var(--YL);
+  width: fit-content;
+  font-size: 36pt;
+  border-width: 2px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 0 auto;
+  margin-bottom: 60px;
+  animation-name: title-colors;
+  animation-duration: 5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@media screen and (max-width: 900px) {
+  .title {
+    font-size: 24pt;
+  }
+}
+
