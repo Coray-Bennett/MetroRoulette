@@ -9,7 +9,7 @@ import SilverLine from './images/WMATA_Silver.svg';
 import YellowLine from './images/WMATA_Yellow.svg';
 import Route from './Route';
 
-const PATH = 'https://MetroRoulette-env.eba-nkjqcn2w.us-east-2.elasticbeanstalk.com';
+const PATH = 'https://www.metrorouletteapi.co/';
 
 const Input = () => {
 
